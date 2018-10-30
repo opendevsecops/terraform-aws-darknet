@@ -11,4 +11,4 @@ A darknet is a type of a honeypot. The network exists within visible network ran
 
 ## Caveats
 
-Due to some odd constrains in HCL, it is impossible to pass undefined values thus the module replicates the flow submodule functionalities in separate modules depending if vpc, subnet or eni must be configured. It seems that this issue will be mitigate in HCL2, Terraform v0.12.
+Due to some odd constrains in HCL, it is impossible to pass undefined values thus the module replicates the flow submodule functionalities in separate modules depending if vpc, subnet or eni must be configured. It seems that this issue will be mitigated in HCL2, Terraform v0.12.

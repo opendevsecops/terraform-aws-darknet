@@ -55,7 +55,6 @@ resource "aws_route_table_association" "application" {
 
 module "darknet" {
   source  = "opendevsecops/darknet/aws"
-  version = "0.1.0"
 
   subnet_id = "${aws_subnet.darknet.id}"
 

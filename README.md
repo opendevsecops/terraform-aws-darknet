@@ -9,6 +9,62 @@ Terraform module which provides darknet facilities for AWS infrastructures.
 
 A darknet is a type of a honeypot. The network exists within visible network ranges that are actively used but it does not contain any network resources of its own. The purpose of the darknet is to capture traffic like a spider web. Since the darknet is not meant to be used for any functional resources, any captured traffic is interesting and potentially malicious.
 
+## Getting Started
+
+Getting started is easy. You will need a VPC and some subnets. Allocate and clearly mark the subnets that you will use for your application. The subnets in between can be used as darknets. Any traffic in the darknets will be flagged as malicious. This will typically occur as soon as an attacker breaks in and tries to explore your network resources.
+
+Here is a complete example of how to configure an AWS VPC with two subnets. The first subnet is allocated as a darknet. The secondary subnet is for application use only.
+
+```terraform
+resource "aws_vpc" "main" {
+  cidr_block = "10.52.52.0/24"
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = "${aws_vpc.main.id}"
+}
+
+resource "aws_subnet" "darknet" {
+  vpc_id     = "${aws_vpc.main.id}"
+  cidr_block = "10.52.52.0/25"
+}
+
+resource "aws_subnet" "application" {
+  vpc_id     = "${aws_vpc.main.id}"
+  cidr_block = "10.52.52.128/25"
+}
+
+resource "aws_route_table" "main" {
+  vpc_id = "${aws_vpc.main.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.gw.id}"
+  }
+}
+
+resource "aws_route_table_association" "darknet" {
+  subnet_id      = "${aws_subnet.darknet.id}"
+  route_table_id = "${aws_route_table.main.id}"
+}
+
+resource "aws_route_table_association" "application" {
+  subnet_id      = "${aws_subnet.application.id}"
+  route_table_id = "${aws_route_table.main.id}"
+}
+
+module "darknet" {
+  source  = "opendevsecops/darknet/aws"
+  version = "0.1.0"
+
+  subnet_id = "${aws_subnet.darknet.id}"
+
+  depends_on = ["${aws_subnet.darknet.id}"]
+}
+```
+
+This module is automatically published to the Terraform Module Registry. More information about the available inputs, outputs, dependencies and instructions how to use the module can be found at the official page [here](https://registry.terraform.io/modules/opendevsecops/darkweb).
+
 ## Caveats
 
 Due to some odd constrains in HCL, it is impossible to pass undefined values thus the module replicates the flow submodule functionalities in separate modules depending if vpc, subnet or eni must be configured. It seems that this issue will be mitigated in HCL2, Terraform v0.12.

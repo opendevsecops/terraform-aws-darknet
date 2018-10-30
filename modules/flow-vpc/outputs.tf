@@ -3,7 +3,7 @@ output "log_group_name" {
 }
 
 output "log_group_arn" {
-  value = "${var.aws_cloudwatch_log_group.arn}"
+  value = "${aws_cloudwatch_log_group.main.arn}"
 }
 
 output "log_retention_in_days" {

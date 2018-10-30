@@ -34,18 +34,18 @@ const send = async (from, to, subject, body) => {
 };
 
 const post = async (uri, body) => {
+    body = JSON.stringify(body);
+
+    const options = url.parse(uri);
+
+    options.method = 'POST';
+
+    options.headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': body.length
+    };
+
     return new Promise((resolve, reject) => {
-        body = JSON.stringify(body);
-
-        const options = url.parse(uri);
-
-        options.method = 'POST';
-
-        options.headers = {
-            'Content-Type': 'application/json',
-            'Content-Length': body.length
-        };
-
         const req = https.request(options, (res) => {
             if (res.statusCode === 200) {
                 res.on('end', () => {
@@ -65,24 +65,22 @@ const post = async (uri, body) => {
 };
 
 const alert = async (meta) => {
-    console.log(process.env.NOTIFICATION_MESSAGE);
-
     const blocks = [];
-
-    blocks.push(process.env.NOTIFICATION_MESSAGE);
-    blocks.push('```');
 
     Object.entries(meta || {}).forEach(([name, value]) => {
         blocks.push(`${name}: ${value}`);
     });
 
-    blocks.push('```');
+    const message = blocks.join('\n');
 
-    const text = blocks.join('\n');
-
-    console.log(text);
+    console.log(process.env.NOTIFICATION_MESSAGE);
+    console.log(message);
 
     if (process.env.SLACK_NOTIFICATION_URL) {
+        console.log('Sending slack notification');
+
+        const text = `${process.env.NOTIFICATION_MESSAGE}\n\`\`\`${message}\`\`\``;
+
         await post(process.env.SLACK_NOTIFICATION_URL, {text});
     }
 };
@@ -110,7 +108,7 @@ exports.handler = async (event) => {
         return;
     }
 
-    alert({
+    await alert({
         'Source IP Addresses': ips.join(', ')
     });
 };

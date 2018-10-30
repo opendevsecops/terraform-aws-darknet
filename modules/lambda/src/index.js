@@ -108,6 +108,6 @@ exports.handler = async (event) => {
     }
 
     alert({
-        'IP Addresses': ips.join(', ')
+        'Source IP Addresses': ips.join(', ')
     });
 };

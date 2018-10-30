@@ -1,10 +1,10 @@
 variable "name" {
-  description = "A unique name for your Lambda Function."
+  description = "A unique name for your Lambda Function"
   default     = "darknet_cloudwatch_handler"
 }
 
 variable "role_name" {
-  description = "A unique name for your Lambda Function."
+  description = "A unique name for your Lambda Function"
   default     = "darknet_cloudwatch_handler_role"
 }
 
@@ -14,7 +14,7 @@ variable "log_retention_in_days" {
 }
 
 variable "target_log_group_name" {
-  description = "The log group name to monitor."
+  description = "The log group name to monitor"
 }
 
 variable "notification_message" {
@@ -23,7 +23,7 @@ variable "notification_message" {
 }
 
 variable "slack_notification_url" {
-  description = "URL for slack notifications."
+  description = "URL for slack notifications"
   default     = ""
 }
 

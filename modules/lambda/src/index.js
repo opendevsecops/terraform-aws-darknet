@@ -81,7 +81,11 @@ const alert = async (meta) => {
 
         const text = `${process.env.NOTIFICATION_MESSAGE}\n\`\`\`${message}\`\`\``;
 
-        await post(process.env.SLACK_NOTIFICATION_URL, {text});
+        try {
+            await post(process.env.SLACK_NOTIFICATION_URL, {text});
+        } catch (e) {
+            console.error(e);
+        }
     }
 };
 

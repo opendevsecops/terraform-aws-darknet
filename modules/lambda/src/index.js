@@ -70,10 +70,13 @@ const alert = async (meta) => {
     const blocks = [];
 
     blocks.push(process.env.NOTIFICATION_MESSAGE);
+    blocks.push('```');
 
     Object.entries(meta || {}).forEach(([name, value]) => {
         blocks.push(`${name}: ${value}`);
     });
+
+    blocks.push('```');
 
     const text = blocks.join('\n');
 

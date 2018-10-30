@@ -9,7 +9,7 @@ module "flow" {
 module "lambda" {
   source = "modules/lambda"
 
-  log_group_name = "${module.flow.log_group_name}"
+  target_log_group_name = "${module.flow.log_group_name}"
 
   depends_on = ["${module.flow.log_group_name}"]
 }

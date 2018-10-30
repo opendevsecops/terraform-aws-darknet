@@ -8,7 +8,12 @@ variable "role_name" {
   default     = "darknet_cloudwatch_handler_role"
 }
 
-variable "log_group_name" {
+variable "log_retention_in_days" {
+  description = "Specifies the number of days you want to retain log events in lambda function log group"
+  default     = 90
+}
+
+variable "target_log_group_name" {
   description = "The log group name to monitor."
 }
 

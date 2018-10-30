@@ -6,15 +6,15 @@ locals {
   source_dir  = "${path.module}/src/"
   output_path = "${path.module}/build/lambda.zip"
 
-  log_group            = "/aws/lambda/${var.name}"
-  log_retention_period = 90
+  log_group             = "/aws/lambda/${var.name}"
+  log_retention_in_days = "${var.log_retention_in_days}"
 
   timeout = 900
 }
 
 resource "aws_cloudwatch_log_group" "main" {
   name              = "${local.log_group}"
-  retention_in_days = "${local.log_retention_period}"
+  retention_in_days = "${local.log_retention_in_days}"
 }
 
 resource "aws_iam_role" "main" {
@@ -88,14 +88,14 @@ resource "aws_lambda_permission" "main" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.main.arn}"
   principal     = "logs.${data.aws_region.current.name}.amazonaws.com"
-  source_arn    = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.log_group_name}:*"
+  source_arn    = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.target_log_group_name}:*"
 
   depends_on = ["aws_lambda_function.main"]
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "main" {
   name            = "${var.name}_filter2"
-  log_group_name  = "${var.log_group_name}"
+  log_group_name  = "${var.target_log_group_name}"
   filter_pattern  = ""
   destination_arn = "${aws_lambda_function.main.arn}"
 

@@ -99,14 +99,22 @@ exports.handler = async (event) => {
 
     const { logEvents } = json || {};
 
-    const ips = Array.from(new Set((logEvents || []).map((entry) => {
-        const { message } = entry || {};
+    const ips = Array.from(
+        new Set(
+            (logEvents || [])
+                .map((entry) => {
+                    const { message } = entry || {};
 
-        const parts = (message || '').split(' ');
-        const src = parts[SRC_FIELD] || '';
+                    const parts = (message || '').split(' ');
+                    const src = parts[SRC_FIELD] || '';
 
-        return src;
-    })));
+                    return src;
+                })
+                .filter((entry) => {
+                    return entry !== '-';
+                })
+        )
+    );
 
     if (!ips.length) {
         return;

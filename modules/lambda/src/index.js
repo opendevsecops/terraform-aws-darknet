@@ -99,28 +99,26 @@ exports.handler = async (event) => {
 
     const { logEvents } = json || {};
 
-    const ips = Array.from(
-        new Set(
-            (logEvents || [])
-                .map((entry) => {
-                    const { message } = entry || {};
+    const ips = Array.from(new Set((logEvents || []).map((entry) => {
+        const { message } = entry || {};
 
-                    const parts = (message || '').split(' ');
-                    const src = parts[SRC_FIELD] || '';
+        const parts = (message || '').split(' ');
+        const src = parts[SRC_FIELD] || '';
 
-                    return src;
-                })
-                .filter((entry) => {
-                    return entry !== '-';
-                })
-        )
-    );
+        return src;
+    })));
 
     if (!ips.length) {
         return;
     }
 
-    await alert({
+    const meta = {
         'Source IP Addresses': ips.join(', ')
-    });
+    };
+
+    if (ips.includes('-')) {
+        meta['Comment'] = 'Parts of the seen traffic is likely due to a network scan.';
+    }
+
+    await alert(meta);
 };

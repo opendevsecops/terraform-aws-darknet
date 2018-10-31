@@ -27,11 +27,19 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_subnet" "darknet" {
   vpc_id     = "${aws_vpc.main.id}"
   cidr_block = "10.52.52.0/25"
+  
+  tags {
+    Name = "darknet"
+  }
 }
 
-resource "aws_subnet" "application" {
+resource "aws_subnet" "adjacent" {
   vpc_id     = "${aws_vpc.main.id}"
   cidr_block = "10.52.52.128/25"
+  
+  tags {
+    Name = "adjacent"
+  }
 }
 
 resource "aws_route_table" "main" {
@@ -48,15 +56,17 @@ resource "aws_route_table_association" "darknet" {
   route_table_id = "${aws_route_table.main.id}"
 }
 
-resource "aws_route_table_association" "application" {
-  subnet_id      = "${aws_subnet.application.id}"
+resource "aws_route_table_association" "adjacent" {
+  subnet_id      = "${aws_subnet.adjacent.id}"
   route_table_id = "${aws_route_table.main.id}"
 }
 
 module "darknet" {
-  source  = "opendevsecops/darknet/aws"
+  source = "opendevsecops/darknet/aws"
 
   subnet_id = "${aws_subnet.darknet.id}"
+
+  ...
 
   depends_on = ["${aws_subnet.darknet.id}"]
 }

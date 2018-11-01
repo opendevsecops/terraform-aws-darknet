@@ -93,7 +93,3 @@ Darknets is a easy, low-cost and quite useful defence and early attack detection
 ### Keep Your Subnets Small
 
 The smaller your darknet subnet is the better. Consider that attackers would typically scan an entire class C network in a single go so your darknet could be entirely missed if it sits outside.
-
-## Caveats
-
-Due to some odd constrains in HCL, it is impossible to pass undefined values thus the module replicates the flow submodule functionalities in separate modules depending if vpc, subnet or eni must be configured. It seems that this issue will be mitigated in HCL2, Terraform v0.12.

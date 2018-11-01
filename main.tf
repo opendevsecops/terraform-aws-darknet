@@ -1,5 +1,5 @@
 module "flow" {
-  source = "modules/flow-subnet"
+  source = "modules/flow"
 
   log_group_name        = "${var.log_group_name}"
   log_retention_in_days = "${var.log_retention_in_days}"

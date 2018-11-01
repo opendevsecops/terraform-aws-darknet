@@ -16,49 +16,61 @@ Getting started is easy. You will need a VPC and some subnets. Allocate and clea
 Here is a complete example of how to configure an AWS VPC with two subnets. The first subnet is allocated as a darknet. The secondary subnet is for application use only.
 
 ```terraform
-resource "aws_vpc" "main" {
+resource "aws_vpc" "test" {
   cidr_block = "10.52.52.0/24"
+
+  tags {
+    Name = "test"
+  }
 }
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = "${aws_vpc.test.id}"
+
+  tags {
+    Name = "test"
+  }
 }
 
 resource "aws_subnet" "darknet" {
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = "${aws_vpc.test.id}"
   cidr_block = "10.52.52.0/25"
-  
+
   tags {
-    Name = "darknet"
+    Name = "test_darknet"
   }
 }
 
 resource "aws_subnet" "adjacent" {
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = "${aws_vpc.test.id}"
   cidr_block = "10.52.52.128/25"
-  
+
   tags {
-    Name = "adjacent"
+    Name = "test_adjacent"
   }
 }
 
-resource "aws_route_table" "main" {
-  vpc_id = "${aws_vpc.main.id}"
+resource "aws_route_table" "test" {
+  vpc_id = "${aws_vpc.test.id}"
 
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.gw.id}"
   }
+  
+  tags {
+    Name = "test"
+  }
 }
 
 resource "aws_route_table_association" "darknet" {
   subnet_id      = "${aws_subnet.darknet.id}"
-  route_table_id = "${aws_route_table.main.id}"
+  route_table_id = "${aws_route_table.test.id}"
 }
 
 resource "aws_route_table_association" "adjacent" {
   subnet_id      = "${aws_subnet.adjacent.id}"
-  route_table_id = "${aws_route_table.main.id}"
+  route_table_id = "${aws_route_table.test.id}"
 }
 
 module "darknet" {

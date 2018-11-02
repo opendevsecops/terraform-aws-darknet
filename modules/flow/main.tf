@@ -56,3 +56,33 @@ resource "aws_flow_log" "main" {
 
   subnet_id = "${var.subnet_id}"
 }
+
+data "aws_ami" "main" {
+  most_recent = true
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+}
+
+resource "aws_instance" "main" {
+  ami           = "${data.aws_ami.main.id}"
+  instance_type = "t3.nano"
+  subnet_id     = "${var.subnet_id}"
+}
+
+resource "aws_network_interface" "main" {
+  count     = 1
+  subnet_id = "${var.subnet_id}"
+
+  attachment {
+    instance     = "${aws_instance.main.id}"
+    device_index = "${count.index + 1}"
+  }
+}

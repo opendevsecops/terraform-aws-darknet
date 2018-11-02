@@ -79,7 +79,7 @@ module "darknet" {
 }
 ```
 
-This module is automatically published to the Terraform Module Registry. More information about the available inputs, outputs, dependencies and instructions how to use the module can be found at the official page [here](https://registry.terraform.io/modules/opendevsecops/darkweb).
+This module is automatically published to the Terraform Module Registry. More information about the available inputs, outputs, dependencies and instructions how to use the module can be found at the official page [here](https://registry.terraform.io/modules/opendevsecops/darknet).
 
 ## Tips & Tricks
 
@@ -88,3 +88,7 @@ Darknets is a easy, low-cost and quite useful defence and early attack detection
 ### Keep Your Subnets Small
 
 The smaller your darknet subnet is the better. Consider that attackers would typically scan an entire class C network in a single go so your darknet could be entirely missed if it sits outside.
+
+## Caveats
+
+AWS VPCs have a level of restrictions which will prevent monitoring completely empty subnets via usage of VPC Flow Logs. As a result, the current solution instantiates a nano instance within every designated darknet. The nano instance does not currently provides any function apart from being a dummy networking device. The cost of this setup is minimal, estimated to be between $4-5 a month. It is however possible to spread the dummy instance in multiple subnets. Nano instances can take up-to 2 network interfaces thus the a single instance can take care of 2 darkness. This features however is not available in the current version of the module.
